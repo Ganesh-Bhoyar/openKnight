@@ -7,14 +7,17 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import Rocketicon from "@/components/ui/rocketicon"
-import { TimerIcon, ZapIcon } from "lucide-react";
+import { TimerIcon, UserCircle2, ZapIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import pieces from "@/components/ui/pieces";
 import { toast } from "react-toastify";
+import { set } from "zod";
+import GameInfo from "@/components/ui/gameinfo";
+import { getSquareColor } from "@/utils/getsquareColor";
  
 
- 
+
 const Battle = () => {
   const [gamestarted, setGameStarted] = useState<boolean>(false);
   const [board, setBoard] = useState<string>("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1");
@@ -24,7 +27,11 @@ const Battle = () => {
   const [from, setFrom] = useState<string>("");
   const [to, setTo] = useState<string>("");
   const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [validmoves, setValidMoves] = useState<string[]>([]); 
+  const [validmoves, setValidMoves] = useState<string[]>([]);
+  const [username, setUsername] = useState<string>("");
+  const [opponent, setOpponent] = useState<string>("");
+  const [history, setHistory] = useState<string[]>([]);
+  const [gameid, setGameid] = useState<string>("");
 
 
   
@@ -80,12 +87,28 @@ useEffect(() => {
    {
     setColor(message.color);
     console.log(message);//this should be in toast coninter later
+    setUsername(message.message[0]);
+    setOpponent(message.message[1]);
+    setGameid(message.message[2]);
     setGameStarted(true);
    }
    if(type=="authenticated")
    {
      if(message === "Ready to play") {
        console.log("You are authenticated and ready to play");
+       toast(
+      <div>
+        <div></div>
+        <pre className="mt-2 w-[700px] rounded-md bg-neutral-950 p-4 overflow-auto">
+          <code className="text-white">{JSON.stringify(`  ${message}  `, null, 2)}</code>
+        </pre>
+      </div>,
+      {
+        // any valid toast options here (e.g., position)
+        position: "top-center",
+        autoClose: 5000,
+      }
+    );
        // Set gamestarted to true or perform any other action
         
      }
@@ -93,16 +116,57 @@ useEffect(() => {
        console.log("You are not authenticated");
        // Set gamestarted to false or perform any other action
        setGameStarted(false);
+       toast(
+      <div>
+        <div></div>
+        <pre className="mt-2 w-[700px] rounded-md bg-neutral-950 p-4 overflow-auto">
+          <code className="text-white">{JSON.stringify(`Please Sign In First`, null, 2)}</code>
+        </pre>
+      </div>,
+      {
+        // any valid toast options here (e.g., position)
+        position: "top-center",
+        autoClose: 5000,
+      }
+    );
      }
      else if(message === "Unauthorized") 
     {
        console.log("Unauthorized");
        // Set gamestarted to false or perform any other action
+       setGameStarted(false);
+       toast(
+      <div>
+        <div></div>
+        <pre className="mt-2 w-[700px] rounded-md bg-neutral-950 p-4 overflow-auto">
+          <code className="text-white">{JSON.stringify(`  ${message}  `, null, 2)}</code>
+        </pre>
+      </div>,
+      {
+        // any valid toast options here (e.g., position)
+        position: "top-center",
+        autoClose: 5000,
+      }
+    );
      }
    }
    if(type == "waiting")
    {
      console.log(message);
+     toast(
+      <div>
+        <div></div>
+        <pre className="mt-2 w-[700px] rounded-md bg-neutral-950 p-4 overflow-auto">
+          <code className="text-white">{JSON.stringify(`Waiting for opponent...`, null, 2)}</code>
+        </pre>
+      </div>,
+      {
+        // any valid toast options here (e.g., position)
+        position: "top-center",
+        autoClose: 5000,
+      }
+    );
+    //try to add animation
    }
    if(type=="valid_moves")
    {
@@ -112,27 +176,43 @@ useEffect(() => {
    }
    if(type=="move")
    {
-    setBoard(message.fen);
-    console.log("Move made:", message.move);
+    setBoard(message.message.fen);
+     setHistory((message.message.move as string[]).map((m)  => m));
+    console.log("Move made:", message.message.move);
    }
    if(type == "result")
    { 
      console.log(message);
+     toast(
+      <div>
+        <div></div>
+        <pre className="mt-2 w-[700px] rounded-md bg-neutral-950 p-4 overflow-auto">
+          <code className="text-white">{JSON.stringify(`  ${message}  `, null, 2)}</code>
+        </pre>
+      </div>,
+      {
+        // any valid toast options here (e.g., position)
+        position: "top-center",
+        autoClose: 5000,
+      }
+    );
      if(message.contains("checkmate"))
      {
         socket.close();
      }
      
    }
+   
+
     
     //this should be in toast coninter later
      
   
   //  toast(
   //     <div>
-  //       <div>Your Account is Succesfully created</div>
+  //       <div></div>
   //       <pre className="mt-2 w-[700px] rounded-md bg-neutral-950 p-4 overflow-auto">
-  //         <code className="text-white">{JSON.stringify(`Successfully created account for ${message}  `, null, 2)}</code>
+  //         <code className="text-white">{JSON.stringify(`  ${message}  `, null, 2)}</code>
   //       </pre>
   //     </div>,
   //     {
@@ -167,6 +247,7 @@ useEffect(() => {
 
       <div className="flex  items-center justify-center w-full h-full grow- gap- mt-8 ml-56">
              <div className="flex flex-col items-center justify-center w-full h-full mb-24 rounded-3xl">
+              <div className=" text-white  flex justify-start align-center mr-105 mb-2 gap-2">{ gamestarted ? <UserCircle2></UserCircle2> : null}  {opponent} </div>
            <div className="grid grid-cols-8 grid-rows-8 w-[500px] h-[500px] relative">
            
                     {Array.from({ length: 64 }, (_, i) => {
@@ -177,15 +258,23 @@ useEffect(() => {
                         const square = `${file}${rank}`;
                         const isDark = (row + col) % 2 === 1; // Classic chessboard pattern
                         const fromselect = square === from;
-
+                       const prevmove = history.length === 0 ? false : history[history.length - 1].includes(square);
                         const piece =  `${ color == "w"? boardarr[i] : boardarr[(7 - row) * 8 + col]}`;
                         let validmove = validmoves.includes(square);
                         console.log("Current piece:", square);
                         console.log("Current valid move:", validmove);
+                        console.log("previous move: ",prevmove);
+
+                        const squareColor = getSquareColor({
+                          isPrevMove: prevmove,
+                          isValidMove: validmove,
+                          isLight: !isDark,
+                        });
+
                         return (
                         <div
                             key={i}
-                            className={`w-full h-full flex justify-center align-center    ${validmove ?  `${isDark ?   "bg-emerald-200/60" : " bg-emerald-200/95" }` : `${isDark ?   " bg-zinc-500" : " bg-zinc-300" }`} relative `}
+                            className={`w-full h-full flex justify-center align-center   ${squareColor} relative `}
                             onClick={() => {
                                 if(move === "b" && move==color  && boardarr[(7 - row) * 8 + col] !== " " && piece.toLowerCase() === piece  ) {
                                     setFrom(square);
@@ -225,6 +314,7 @@ useEffect(() => {
                         );
                     })}
                     </div>
+                    <div className="text-white flex justify-start align-center  mr-105 mt-2 gap-2">{ gamestarted ? <UserCircle2></UserCircle2>  : null}  {username} </div>
 
              </div>
              <div className="flex flex-col items-center justify-start mt-100 w-full h-full gap-10">
@@ -245,49 +335,19 @@ useEffect(() => {
                       <Button  onClick={() => {socket?.send(JSON.stringify({type:"join", messsage:"wants to join"}));}} className="bg-gd-100 flex hover:bg-emerald-400 ol items-center justify-center text-center w-[350px] h-[50px]">Start Game</Button>
                      </div>
                     </div>:
+                   
+
+                   
                     
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    
-                    <div></div>}
-                    <div></div>
+
+
+                    <div className="pb-100"> <GameInfo history={history} gameinfo={
+                      { name1: username,
+                       name2: opponent,
+                       gameid: gameid,
+                       gamestarted: new Date()
+                     }} /> </div>}
+                   
                   </div>
              </div>
 

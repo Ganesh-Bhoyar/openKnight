@@ -30,13 +30,15 @@ import { Square } from 'chess.js';
             socket.send(JSON.stringify({ type: "waiting", message: "Waiting for player 2" }));
         }
         else
-        {
-            this.games.push(new game(this.waiting!,player,nanoid(5),this.waitingSocket!,socket));
+        {   let gameid =nanoid (5);
+            this.games.push(new game(this.waiting!,player,gameid,this.waitingSocket!,socket));
             const name = this.waiting!.username;
             this.waiting=null;
+           
             console.log("Game started between " + name + " and " + player.username);
-            this.waitingSocket!.send(JSON.stringify({ type: "start", message:{ message:"Game started with " + player.username,color: "w" }}));
-            socket.send(JSON.stringify({ type: "start", message: {message:"Game started with " + name,color: "b"}}));
+            this.waitingSocket!.send(JSON.stringify({ type: "start", message:{ message:[name,player.username,gameid],color: "w" }}));
+             this.waitingSocket=null;
+            socket.send(JSON.stringify({ type: "start", message: {message:[player.username,name,gameid],color: "b"}}));
         }
     }
 
@@ -74,7 +76,7 @@ import { Square } from 'chess.js';
     }
 
     // Append move to history
-    currentgame.moves += `${from}-${to} `;
+    currentgame.moves.push(`${from}-${to}`);
 
     // Toggle turn
     currentgame.currentmove = !currentgame.currentmove;
@@ -141,16 +143,22 @@ import { Square } from 'chess.js';
 
     // Normal move: notify both players
     const message1 = {
-      type: "move",
+      
       message:{
-        move: `${from}-${to}`,
+        move: currentgame.moves,
       fen: currentgame.board.fen()
       }
      
     };
 
-    currentgame.socket1.send(JSON.stringify(message1));
-    currentgame.socket2.send(JSON.stringify(message1));
+    currentgame.socket1.send(JSON.stringify({
+       type: "move",
+        message: message1
+      }));
+    currentgame.socket2.send(JSON.stringify({
+        type: "move",
+        message: message1
+      }));
 
     // Optional: log current board
     console.log(currentgame.board.ascii());
