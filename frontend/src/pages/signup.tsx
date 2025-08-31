@@ -37,7 +37,7 @@ export function Signup() {
   mode: 'onChange',
   })
    return (
-     <div className="w-full h-screen flex items-center justify-center bg-[#7a7a7a] ">
+     <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-800 to-gray-950 ">
        
       <div className="w-96 max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
     
@@ -79,7 +79,7 @@ export function Signup() {
           )}
         />
  
-        <Button type="submit" className="w-full">Submit</Button>
+        <Button type="submit" className="w-full hover:bg-yellow-400 hover:text-gray-800">Submit</Button>
       </form>
       <div className="text-center">Already have an account? <span className="underline text-blue-600 cursor-pointer" onClick={()=>{window.location.href="/login"}}>Login</span></div>
     </Form>
@@ -97,15 +97,7 @@ export function Signup() {
         method: "POST",
         data: values
       });
-     toast(
-    <div>
-      <div>Your Account is Succesfully created</div>
-      <pre className="mt-2 w-[290px] rounded-md bg-neutral-950 p-4 overflow-auto">
-        <code className="text-white">{JSON.stringify(`Successfully created account for ${values.username}  `, null, 2)}</code>
-      </pre>
-    </div>,
-    {
-      // any valid toast options here (e.g., position)
+     toast("Account created successfully", {
       position: "top-center",
       autoClose: 5000,
     }

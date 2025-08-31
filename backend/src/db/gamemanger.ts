@@ -81,25 +81,53 @@ import { Square } from 'chess.js';
     // Toggle turn
     currentgame.currentmove = !currentgame.currentmove;
 
+
+const message1 = {
+      
+      message:{
+        move: currentgame.board.history({ verbose: true }),
+      fen: currentgame.board.fen()
+      }
+     
+    };
+
+    currentgame.socket1.send(JSON.stringify({
+       type: "move",
+        message: message1
+      }));
+    currentgame.socket2.send(JSON.stringify({
+        type: "move",
+        message: message1
+      }));
+
+    // Optional: log current board
+    console.log(currentgame.board.ascii());
+  
+
     // Checkmate
-    if (currentgame.board.isCheckmate()) {
-      const winner = currentgame.socket1 === socket ? { username: currentgame.player1.username, color: "white" } : { username: currentgame.player2.username, color: "black" };
+    if (currentgame.board.isGameOver() && currentgame.board.isCheckmate()) {
+      console.log("checkmate is conditionally rendered");
+      const winner = currentgame.socket1 === socket ? { username: currentgame.player1.username, color: "w" } : { username: currentgame.player2.username, color: "b" };
 
       // Notify both players
       currentgame.socket1.send(JSON.stringify({
         type: "result",
-        message: `Checkmate! ${winner.username} wins`,
-        color: winner.color
+         message: {
+          message: `Checkmate! ${winner.username} wins`,
+          color: winner.color
+        }
       }));
       currentgame.socket2.send(JSON.stringify({
         type: "result",
-        message: `Checkmate! ${winner.username} wins`,
-        color: winner.color
+        message: {
+          message: `Checkmate! ${winner.username} wins`,
+          color: winner.color
+        }
       }));
 
       // Optionally remove game
       // this.games.splice(this.games.indexOf(currentgame), 1);
-      return;
+ 
     }
 
      
@@ -128,7 +156,7 @@ import { Square } from 'chess.js';
         
      
     }
-  }
+  
     else
     {
         currentgame.socket2.send(JSON.stringify({
@@ -140,30 +168,11 @@ import { Square } from 'chess.js';
         message: "Check — Yours turn"
       }));
     }
+  }
 
     // Normal move: notify both players
-    const message1 = {
-      
-      message:{
-        move: currentgame.moves,
-      fen: currentgame.board.fen()
-      }
-     
-    };
 
-    currentgame.socket1.send(JSON.stringify({
-       type: "move",
-        message: message1
-      }));
-    currentgame.socket2.send(JSON.stringify({
-        type: "move",
-        message: message1
-      }));
-
-    // Optional: log current board
-    console.log(currentgame.board.ascii());
-  }
-}
+}}
 
 getmoves(socket: WebSocket,from:Square) {
   const currentgame = this.games.find(
@@ -178,4 +187,5 @@ getmoves(socket: WebSocket,from:Square) {
   }
 }
 }
+ 
 

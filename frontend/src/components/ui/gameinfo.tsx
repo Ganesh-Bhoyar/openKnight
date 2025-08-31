@@ -1,8 +1,18 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-
+interface history{
+  before: string;
+  after: string;
+  color: string;
+  piece: string;
+  from: string;
+  to: string;
+  san: string;
+  lan: string;
+  flags: string;
+}
 interface InfoProps {
-  history: string[];
+  history: history[];
   gameinfo: {
     name1: string;
     name2: string;
@@ -10,6 +20,20 @@ interface InfoProps {
     gamestarted: Date;
   };
 }
+const chessSymbols: Record<string, string> = {
+  wq: "♔",
+  wk: "♕",
+  wr: "♖",
+  wb: "♗",
+  wn: "♘",
+  wp: "♙",
+  bq: "♚",
+  bk: "♛",
+  br: "♜",
+  bb: "♝",
+  bn: "♞",
+  bp: "♟",
+};
 
 const GameInfo = (props: InfoProps) => {
   return (
@@ -44,14 +68,14 @@ const GameInfo = (props: InfoProps) => {
               </div>
             ) : (
               props.history.map((move, index) => {
-                const [from, to] = move.split("-");
+                const { from, to ,piece,color} = move;
                 return (
                   <div
                     key={index}
                     className="flex items-center justify-between bg-zinc-800 rounded-lg px-4 py-2 hover:bg-zinc-700 transition-all"
                   >
                     <span className="font-semibold text-zinc-300">{index + 1}.</span>
-                    <span className="font-mono">{from}</span>
+                    <span className="font-mono">{chessSymbols[`${color}${piece}`]}{from}</span>
                     <span className="text-zinc-400">→</span>
                     <span className="font-mono">{to}</span>
                   </div>
