@@ -106,10 +106,10 @@ const ChessResultsPage: React.FC<WinPageProps> = ({
         </div>
         {/* Actions */}
         <div className="flex flex-col gap-2 w-full mt-4">
-          <button className="bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold py-3 rounded-xl transition duration-300 shadow mb-2">
+          <button className="bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold py-3 rounded-xl transition duration-300 shadow mb-2" onClick={() => window.location.reload()}>
             Play Again
           </button>
-          <button className="bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-xl transition duration-300 shadow">
+          <button className="bg-slate-800 hover:bg-slate-700 text-white py-2 rounded-xl transition duration-300 shadow" onClick={() => window.location.href = '/'}>
             Return to Home
           </button>
         </div>
@@ -180,10 +180,10 @@ const LossPage: React.FC<LossPageProps> = ({
         </div>
         {/* Actions */}
         <div className="flex flex-col gap-2 w-full mt-4">
-          <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl transition duration-300 shadow mb-2">
+          <button className="bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl transition duration-300 shadow mb-2" onClick={() => window.location.reload()}>
             Try Again
           </button>
-          <button className="bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-xl transition duration-300 shadow">
+          <button className="bg-gray-800 hover:bg-gray-700 text-white py-2 rounded-xl transition duration-300 shadow" onClick={() => window.location.href = '/'}>
             Return to Home
           </button>
         </div>
@@ -256,10 +256,10 @@ const DrawPage: React.FC<DrawPageProps> = ({
         </div>
         {/* Actions */}
         <div className="flex flex-col gap-3 w-full max-w-sm">
-          <button className="bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold py-3 rounded-xl transition duration-300 shadow">
+          <button className="bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold py-3 rounded-xl transition duration-300 shadow" onClick={() => window.location.reload()}>
             Play Again
           </button>
-          <button className="bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl transition duration-300 shadow">
+          <button className="bg-gray-700 hover:bg-gray-600 text-white py-3 rounded-xl transition duration-300 shadow" onClick={() => window.location.href = '/'}  >
             Return to Home
           </button>
         </div>

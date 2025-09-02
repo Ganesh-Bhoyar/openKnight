@@ -85,7 +85,7 @@ const Battle = () => {
 
     return { boardstr: boardStr.split(""), move };
   };
-
+  
   useEffect(() => {
 
     const socket = new WebSocket("ws://localhost:3000");
@@ -93,6 +93,8 @@ const Battle = () => {
     socket.onopen = () => {
       socket.send(JSON.stringify({ type: 'auth', token: localStorage.getItem("token") }));
     };
+
+    
     socket.onmessage = (event) => {
       const { type, message } = JSON.parse(event.data);
       if (type == "welcome") {
@@ -114,6 +116,7 @@ const Battle = () => {
           toast(message, {
             position: "top-center",
             autoClose: 5000,
+              style: {  color: '#1F2937'}
           });
           // Set gamestarted to true or perform any other action
 
@@ -123,16 +126,12 @@ const Battle = () => {
           // Set gamestarted to false or perform any other action
           setGameStarted(false);
           toast(
-            <div>
-              <div></div>
-              <pre className="mt-2 w-[700px] rounded-md bg-neutral-950 p-4 overflow-auto">
-                <code className="text-white">{JSON.stringify(`Please Sign In First`, null, 2)}</code>
-              </pre>
-            </div>,
+            "Please Sign In First",
             {
               // any valid toast options here (e.g., position)
               position: "top-center",
               autoClose: 5000,
+                style: {  color: '#1F2937'}
             }
           );
         }
@@ -141,16 +140,12 @@ const Battle = () => {
           // Set gamestarted to false or perform any other action
           setGameStarted(false);
           toast(
-            <div>
-              <div></div>
-              <pre className="mt-2 w-[700px] rounded-md bg-neutral-950 p-4 overflow-auto">
-                <code className="text-white">{JSON.stringify(`  ${message}  `, null, 2)}</code>
-              </pre>
-            </div>,
+            "Unauthorized",
             {
               // any valid toast options here (e.g., position)
               position: "top-center",
               autoClose: 5000,
+              style: {  color: '#1F2937'}
             }
           );
         }
@@ -260,9 +255,12 @@ const Battle = () => {
   };
 
   return (
-    <div className="flex  items-center justify-center h-screen bg-zinc-800 w-full">
-      <div className="bg-neutral-900 flex flex-col items-center justify-center w-48  h-full fixed left-0 text-white">
-        navbar  valid moves:{validmoves}
+    <div className="flex  items-center justify-center h-screen bg-gradient-to-br from-gray-900 via-slate-800 to-gray-950 w-full overflow-hidden">
+      <div className="bg-neutral-900 flex flex-col items-center justify-center w-48  h-12 fixed left-0 top-6 text-white">
+       <div className="flex items-center gap-2 font-bold text-xl">
+            <span className="text-yellow-400 text-2xl">♘</span>
+            <span className="text-yellow-400">OpenKnight</span>
+          </div>
       </div>
 
       <div className="flex  items-center justify-center w-full h-full grow- gap- mt-8 ml-56 noscroll">

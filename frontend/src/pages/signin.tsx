@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import Crossicon from "../components/icons/crossicon";
+import { toast } from "react-toastify";
 
 export const formSchema = z.object({
   username: z.string().min(2, "Username is required"),
@@ -34,7 +35,7 @@ export function Signin() {
     mode: 'onChange',
   })
   return (
-    <div className="w-full h-screen flex items-center justify-center bg-[#7a7a7a] ">
+    <div className="w-full h-screen flex items-center justify-center bg-gradient-to-br from-gray-900 via-slate-800 to-gray-950 ">
 
       <div className="w-96 max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
 
@@ -78,7 +79,7 @@ export function Signin() {
             />
 
 
-            <Button type="submit" className="w-full">Login</Button>
+            <Button type="submit" className="w-full hover:bg-yellow-400 hover:text-gray-800">Login</Button>
           </form>
           <div className="text-center">Don't have an account? <span className="underline text-blue-600 cursor-pointer" onClick={() => { window.location.href = "/signup" }}>Signup</span></div>
         </Form>
@@ -97,9 +98,15 @@ async function onSubmit(values: z.infer<typeof formSchema>) {
       data: values
     })
     if (res.status === 200) {
-      alert(res.data.message);
+      toast("Login successful", {
+           position: "top-center",
+           autoClose:2500,
+           style: {  color: '#1F2937'}
+         });
       localStorage.setItem('token', res.data.auth)
+      setTimeout(() => {
       window.location.href = "/dashboard";
+    }, 2500);
     }
   } catch (err) {
     if (axios.isAxiosError(err) && err.response) {

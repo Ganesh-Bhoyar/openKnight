@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface ChessWaitingPageProps {
   wait: React.Dispatch<React.SetStateAction<boolean>>;
+  
 }
 
 const waitingStates = [

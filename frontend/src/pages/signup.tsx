@@ -97,15 +97,16 @@ export function Signup() {
         method: "POST",
         data: values
       });
-     toast("Account created successfully", {
+     toast ("Account created successfully", {
       position: "top-center",
-      autoClose: 5000,
+      autoClose:2500,
+      style: {  color: '#1F2937'}
     }
   );
 
     setTimeout(() => {
       window.location.href = "/login";
-    }, 5000);
+    }, 2500);
   } catch (err) {
     let errormessage="";
      
