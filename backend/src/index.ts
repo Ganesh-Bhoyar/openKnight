@@ -96,7 +96,10 @@ wss.on('connection',  async function connection(socket,req) {
     gm.getmoves(socket,message.from);
   }
    
- 
+ if(message.type =="waitingnull")
+ {
+  gm.updatewaiting(socket,false);
+ }
    
   })
 

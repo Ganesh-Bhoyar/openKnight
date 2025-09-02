@@ -186,6 +186,13 @@ getmoves(socket: WebSocket,from:Square) {
     }));
   }
 }
+
+updatewaiting(socket: WebSocket, status: boolean) {
+   if(socket == this.waitingSocket)
+   {
+      this.waitingSocket = status ? socket : null;
+   }
 }
+ }
  
 

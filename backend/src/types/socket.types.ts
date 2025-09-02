@@ -20,5 +20,9 @@ interface getmovesmessage{
     type:"getmoves";
     from:Square;
 }
+interface waitingnullmessage{
+    type:"waitingnull";
+    message:string;
+}
 
-export type servermessage=joinmessage |movemessage |authmessage |getmovesmessage;
+export type servermessage=joinmessage |movemessage |authmessage |getmovesmessage |waitingnullmessage;
