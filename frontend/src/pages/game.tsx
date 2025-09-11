@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect ,useRef} from "react";
 import {
   Select,
   SelectContent,
@@ -17,7 +17,10 @@ import GameInfo from "@/components/ui/gameinfo";
 import { getSquareColor } from "@/utils/getsquareColor";
 import ChessWaitingPage from "./waitingplayer";
 import { set } from "zod";
-import ChessResultsPage, { LossPage } from "./result";
+import ChessResultsPage, { GameOverTimeout, LossPage } from "./result";
+import Timer from "@/utils/timerlogic";
+import { pl } from "zod/v4/locales";
+
 
 
 
@@ -38,8 +41,16 @@ const Battle = () => {
   const [waiting, setWaiting] = useState<boolean>(false);
   const [gameover, setGameover] = useState<boolean>(false);
   const [winner, setWinner] = useState<string>("");
+  const [playertimeleft, setPlayertimeleft] = useState<number>(0);
+  const [opponenttimeleft, setOpponenttimeleft] = useState<number>(0);
+  const [timeup, setTimeup] = useState<boolean>(false); 
+  const  timerA = useRef<NodeJS.Timeout | null>(null);
+  const  timerB = useRef<NodeJS.Timeout | null>(null);
+  const [timechosen, settimechosen] = useState<string>("");
+  
+ 
 
-
+  
 
   interface history {
     before: string;
@@ -119,7 +130,7 @@ const Battle = () => {
               style: {  color: '#1F2937'}
           });
           // Set gamestarted to true or perform any other action
-
+          
         }
         else if (message === "Please Signin First") {
           console.log("You are not authenticated");
@@ -232,6 +243,19 @@ const Battle = () => {
     setMove(move);
   }, [board, validmoves])
 
+  useEffect(() => {
+    if(move ==color && gamestarted)
+    {
+        Timer(setPlayertimeleft, false,  setTimeup,timerA);
+        Timer(setOpponenttimeleft, true,  setTimeup,timerB);
+    }
+    else if(move != color && gamestarted)
+    {
+         Timer(setPlayertimeleft, true,  setTimeup,timerA);
+        Timer(setOpponenttimeleft, false,  setTimeup,timerB);
+    }
+  },[move,gamestarted])
+
   const resultProps = {
     player: {
       name: "You",
@@ -265,7 +289,7 @@ const Battle = () => {
 
       <div className="flex  items-center justify-center w-full h-full grow- gap- mt-8 ml-56 noscroll">
         <div className="flex flex-col items-center justify-center w-full h-full mb-24 rounded-3xl">
-          <div className=" text-white  flex justify-start align-center mr-105 mb-2 gap-2">{gamestarted ? <UserCircle2></UserCircle2> : null}  {opponent} </div>
+          <div className=" text-white  flex justify-start align-center mr-105 mb-2 gap-2">{gamestarted ? <UserCircle2></UserCircle2> : null}  {opponent} <span>{playertimeleft}</span></div>
           <div className="grid grid-cols-8 grid-rows-8 w-[500px] h-[500px] relative">
 
             {Array.from({ length: 64 }, (_, i) => {
@@ -307,6 +331,7 @@ const Battle = () => {
                       console.log("Sending move:", from, "to:", square);
                       setValidMoves([]);
                       socket?.send(JSON.stringify({ type: "move", from, to: square }));
+                       
 
 
                       //websocket to vaild move
@@ -320,6 +345,7 @@ const Battle = () => {
                       console.log("Sending move:", from, "to:", square);
                       setValidMoves([]);
                       socket?.send(JSON.stringify({ type: "move", from, to: square }));
+                       
                       //websocket to vaild move
                       //check if move is valid
                       //when from is set ,call websocket to get valid moves
@@ -332,7 +358,7 @@ const Battle = () => {
               );
             })}
           </div>
-          <div className="text-white flex justify-start align-center  mr-105 mt-2 gap-2">{gamestarted ? <UserCircle2></UserCircle2> : null}  {username} </div>
+          <div className="text-white flex justify-start align-center  mr-105 mt-2 gap-2">{gamestarted ? <UserCircle2></UserCircle2> : null}  {username}<span>{opponenttimeleft}</span> </div>
 
         </div>
         <div className="flex flex-col items-center justify-start mt-35 w-full h-full gap-10">
@@ -346,24 +372,28 @@ const Battle = () => {
         <LossPage {...resultProps} />
       )}
     </div>
-  ) : waiting ? (
+  ) :timeup ?(
+    <div className="fixed inset-0 w-full h-screen py-10 bg-opacity-50 flex items-center justify-center my-10">
+      <GameOverTimeout {...resultProps}  playerTimeLeft={playertimeleft.toString()}  opponentTimeLeft={opponenttimeleft.toString()} onPlayAgain={()=>{window.location.href="/game"}} onReturnHome={()=>{window.location.href="/"}}/>
+    </div>
+  ): waiting ? (
     <div className="fixed inset-0 w-full bg-opacity-50 flex items-center justify-center">
-      <ChessWaitingPage wait={setWaiting} />
+      <ChessWaitingPage socket={socket} />
     </div>
   ) : !gamestarted ? (
     <div className="mr-30 rounded-md w-[350px] flex flex-col gap-20 items-center justify-center mt-30">
-      <Select>
+      <Select onValueChange={(value) => settimechosen(value)}>
         <SelectTrigger className="w-[350px] h-[70px] bg-slate-200 font-white rounded-lg">
           <SelectValue placeholder="Select Time" />
         </SelectTrigger>
         <SelectContent>
-          <SelectItem value="1min">
+          <SelectItem value="60">
             1 min <Rocketicon />
           </SelectItem>
-          <SelectItem value="3min">
+          <SelectItem value="180">
             3 min <ZapIcon />
           </SelectItem>
-          <SelectItem value="10min">
+          <SelectItem value="600">
             10 min <TimerIcon />
           </SelectItem>
         </SelectContent>
@@ -372,8 +402,10 @@ const Battle = () => {
       <Button
         onClick={() => {
           socket?.send(
-            JSON.stringify({ type: "join", messsage: "wants to join" })
+            JSON.stringify({ type: "join", messsage: "wants to join", time: timechosen })
           );
+          setPlayertimeleft(parseInt(timechosen));
+          setOpponenttimeleft(parseInt(timechosen));
         }}
         className="bg-gd-100 flex hover:bg-emerald-400 items-center justify-center text-center w-[350px] h-[50px]"
       >

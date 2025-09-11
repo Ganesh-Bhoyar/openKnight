@@ -3,6 +3,7 @@
   interface joinmessage{
     type:"join";
     message:string;
+    time:number;
    
 }
 interface movemessage{

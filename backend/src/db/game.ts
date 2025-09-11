@@ -14,8 +14,10 @@ export class game{
     starttime: Date
     socket1:WebSocket;  
     socket2:WebSocket;
+    timeleft1:number;
+    timeleft2:number;
 
-    constructor(player1:Iuser,player2 : Iuser, gameid:string,socket1:WebSocket,socket2:WebSocket)
+    constructor(player1:Iuser,player2 : Iuser, gameid:string,socket1:WebSocket,socket2:WebSocket,time:number)
     {
         this.player1=player1;
         this.player2=player2;
@@ -28,6 +30,9 @@ export class game{
 
         this.socket1=socket1;
         this.socket2=socket2;
+
+        this.timeleft1=time;
+        this.timeleft2=time;
         
     }
 

@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
+import  { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface ChessWaitingPageProps {
-  wait: React.Dispatch<React.SetStateAction<boolean>>;
-  
+ socket: WebSocket | null;
 }
 
 const waitingStates = [
@@ -32,7 +31,7 @@ const playerCounts: PlayerCounts = {
 const getRandomFromArray = <T,>(array: T[]): T =>
   array[Math.floor(Math.random() * array.length)];
 
-const ChessWaitingPage = ( {wait} :ChessWaitingPageProps) => {
+const ChessWaitingPage = ( {socket} :ChessWaitingPageProps) => {
   const [statusText, setStatusText] = useState(waitingStates[0]);
   const [spinnerPiece, setSpinnerPiece] = useState("♔");
   const [isSearching, setIsSearching] = useState(true);
@@ -132,7 +131,12 @@ const ChessWaitingPage = ( {wait} :ChessWaitingPageProps) => {
 
       {/* Cancel button */}
       <button
-        onClick={() => wait(false)}
+        onClick={() => {
+          socket?.send(JSON.stringify({ type: "waitingnull", message: "Canceling search..." }));
+          window.location.href = "/dashboard";
+           socket?.close();
+          setIsSearching(false);
+         }}
         className="px-6 py-2 bg-red-500 hover:bg-red-600 rounded-lg"
       >
         Cancel Search

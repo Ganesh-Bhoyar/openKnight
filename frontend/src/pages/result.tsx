@@ -268,7 +268,159 @@ const DrawPage: React.FC<DrawPageProps> = ({
   );
 };
 
-export   {DrawPage ,LossPage};
+ 
+
+interface GameOverTimeoutProps {
+  player: Player;
+  opponent: Player;
+  playerTimeLeft: string;
+  opponentTimeLeft: string;
+  gameStats: {
+    duration: string;
+    moves: number;
+    timeControl: string;
+  };
+  ratingChange: string;
+  onPlayAgain?: () => void;
+  onReturnHome?: () => void;
+}
+
+const GameOverTimeout: React.FC<GameOverTimeoutProps> = ({
+  player,
+  opponent,
+  playerTimeLeft="  00:00",
+  opponentTimeLeft="  00:00",
+  gameStats={...{ duration: "5m 0s", moves: 40, timeControl: "3|2" }},
+  ratingChange="+18",
+  onPlayAgain,
+  onReturnHome,
+}) => {
+  const isPlayerTimeout = playerTimeLeft === "00:00";
+
+  return (
+    <div className="  bg-gradient-to-br from-red-900 via-gray-900 to-gray-950 flex items-center justify-center px-1">
+      {/* Floating timeout icons animation */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <div
+            key={i}
+            className="absolute text-red-500/20 text-4xl animate-bounce"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              animationDelay: `${Math.random() * 2}s`,
+            }}
+          >
+            ⏰
+          </div>
+        ))}
+      </div>
+
+      <div className="relative z-10 bg-gray-900/90 backdrop-blur-md rounded-2xl shadow-2xl p-8 w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-6">
+          <div className="text-6xl mb-3 animate-pulse">⏰</div>
+          <h1 className="text-4xl font-bold text-red-400 mb-2">Time Out!</h1>
+          <p className="text-gray-300">
+            {isPlayerTimeout ? "You" : opponent.name} ran out of time
+          </p>
+        </div>
+
+        {/* Players Section */}
+        <div className="space-y-4 mb-6">
+          {/* Player Card */}
+          <div className={`bg-gray-800 rounded-lg p-4 border-2 ${
+            isPlayerTimeout ? "border-red-500/50" : "border-gray-600"
+          }`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{player.avatar}</span>
+                <div>
+                  <div className={`font-semibold ${isPlayerTimeout ? "text-red-400" : "text-white"}`}>
+                    {player.name}
+                  </div>
+                  <div className="text-sm text-gray-400">Rating: {player.rating}</div>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className={`font-mono text-lg font-bold ${
+                  isPlayerTimeout ? "text-red-500" : "text-green-400"
+                }`}>
+                  {playerTimeLeft}
+                </div>
+                <div className="text-xs text-gray-500">Time Left</div>
+              </div>
+            </div>
+          </div>
+
+          {/* VS Divider */}
+          <div className="text-center">
+            <span className="text-gray-500 font-bold">VS</span>
+          </div>
+
+          {/* Opponent Card */}
+          <div className={`bg-gray-800 rounded-lg p-4 border-2 ${
+            !isPlayerTimeout ? "border-red-500/50" : "border-gray-600"
+          }`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{opponent.avatar}</span>
+                <div>
+                  <div className={`font-semibold ${!isPlayerTimeout ? "text-red-400" : "text-white"}`}>
+                    {opponent.name}
+                  </div>
+                  <div className="text-sm text-gray-400">Rating: {opponent.rating}</div>
+                </div>
+              </div>
+              <div className="text-right">
+                <div className={`font-mono text-lg font-bold ${
+                  !isPlayerTimeout ? "text-red-500" : "text-green-400"
+                }`}>
+                  {opponentTimeLeft}
+                </div>
+                <div className="text-xs text-gray-500">Time Left</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Game Stats */}
+        
+
+        {/* Time Control Info */}
+        
+
+        {/* Action Buttons */}
+        <div className="space-y-3">
+          <button
+            onClick={onPlayAgain}
+            className="w-full bg-red-600 hover:bg-red-500 text-white font-bold py-3 rounded-xl transition duration-300 shadow-lg"
+          >
+            Play Again
+          </button>
+          <button
+            onClick={onReturnHome}
+            className="w-full bg-gray-700 hover:bg-gray-600 text-gray-200 font-semibold py-3 rounded-xl transition duration-300"
+          >
+            Return Home
+          </button>
+        </div>
+
+        {/* Tip */}
+        <div className="mt-4 text-center">
+          <p className="text-gray-500 text-sm italic">
+            💡 Tip: Practice faster decision-making to avoid timeouts!
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+ 
+ 
+
+export   {DrawPage ,LossPage,GameOverTimeout};
 
 
 

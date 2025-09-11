@@ -18,7 +18,7 @@ import { Square } from 'chess.js';
         this.waitingSocket=null;
     }
 
-    adduser(player : Iuser,socket: WebSocket)
+    adduser(player : Iuser,socket: WebSocket,time:number)
     {
         //if waiting is null
         if(this.waiting==null && this.waitingSocket==null)
@@ -31,7 +31,7 @@ import { Square } from 'chess.js';
         }
         else
         {   let gameid =nanoid (5);
-            this.games.push(new game(this.waiting!,player,gameid,this.waitingSocket!,socket));
+            this.games.push(new game(this.waiting!,player,gameid,this.waitingSocket!,socket,time));
             const name = this.waiting!.username;
             this.waiting=null;
            
@@ -184,6 +184,7 @@ getmoves(socket: WebSocket,from:Square) {
       type: "valid_moves",
       message: currentgame.board.moves({ square:from, verbose: true })
     }));
+    console.log("player removed from waiting list");
   }
 }
 
@@ -191,7 +192,13 @@ updatewaiting(socket: WebSocket, status: boolean) {
    if(socket == this.waitingSocket)
    {
       this.waitingSocket = status ? socket : null;
+      this.waiting = status ? this.waiting : null;
+      if(!status)
+      {
+        console.log("player removed from waiting list");
+      }
    }
+   
 }
  }
  
