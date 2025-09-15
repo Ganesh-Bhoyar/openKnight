@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 interface ChessWaitingPageProps {
  socket: WebSocket | null;
+ timechoosen:number;
 }
 
 const waitingStates = [
@@ -31,7 +32,7 @@ const playerCounts: PlayerCounts = {
 const getRandomFromArray = <T,>(array: T[]): T =>
   array[Math.floor(Math.random() * array.length)];
 
-const ChessWaitingPage = ( {socket} :ChessWaitingPageProps) => {
+const ChessWaitingPage = ( {socket,timechoosen} :ChessWaitingPageProps) => {
   const [statusText, setStatusText] = useState(waitingStates[0]);
   const [spinnerPiece, setSpinnerPiece] = useState("♔");
   const [isSearching, setIsSearching] = useState(true);
@@ -132,7 +133,7 @@ const ChessWaitingPage = ( {socket} :ChessWaitingPageProps) => {
       {/* Cancel button */}
       <button
         onClick={() => {
-          socket?.send(JSON.stringify({ type: "waitingnull", message: "Canceling search..." }));
+          socket?.send(JSON.stringify({ type: "waitingnull", time:  timechoosen }));
           window.location.href = "/dashboard";
            socket?.close();
           setIsSearching(false);

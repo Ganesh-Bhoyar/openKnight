@@ -23,7 +23,7 @@ interface getmovesmessage{
 }
 interface waitingnullmessage{
     type:"waitingnull";
-    message:string;
+    time:  number ;
 }
 
 export type servermessage=joinmessage |movemessage |authmessage |getmovesmessage |waitingnullmessage;

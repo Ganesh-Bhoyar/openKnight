@@ -20,6 +20,7 @@ import { set } from "zod";
 import ChessResultsPage, { GameOverTimeout, LossPage } from "./result";
 import Timer from "@/utils/timerlogic";
 import { pl } from "zod/v4/locales";
+ 
 
 
 
@@ -50,7 +51,6 @@ const Battle = () => {
   
  
 
-  
 
   interface history {
     before: string;
@@ -73,6 +73,7 @@ const Battle = () => {
     san: string;
     // and some optional fields like promotion
   }
+ 
 
 
   const fentoboard = (fen: string) => {
@@ -288,8 +289,11 @@ const Battle = () => {
       </div>
 
       <div className="flex  items-center justify-center w-full h-full grow- gap- mt-8 ml-56 noscroll">
-        <div className="flex flex-col items-center justify-center w-full h-full mb-24 rounded-3xl">
-          <div className=" text-white  flex justify-start align-center mr-105 mb-2 gap-2">{gamestarted ? <UserCircle2></UserCircle2> : null}  {opponent} <span>{playertimeleft}</span></div>
+        <div className="flex flex-col items-center justify-center w-full h-full mb-16 rounded-3xl">
+          
+          
+           <div className=" text-white  flex justify-center align-center mr-12  mb-2 ml-12 gap-2">{gamestarted ? <><span className="text-xl flex justify-center items-end gap-2"><UserCircle2 className=""></UserCircle2>{opponent}</span><span className="ml-84"><Button className="bg-slate-100 text-gray-700 h-8 text-xl w-24 hover:text-white" ><TimerIcon className="size-md"></TimerIcon>{playertimeleft}</Button></span></> : null}   </div>
+
           <div className="grid grid-cols-8 grid-rows-8 w-[500px] h-[500px] relative">
 
             {Array.from({ length: 64 }, (_, i) => {
@@ -358,7 +362,7 @@ const Battle = () => {
               );
             })}
           </div>
-          <div className="text-white flex justify-start align-center  mr-105 mt-2 gap-2">{gamestarted ? <UserCircle2></UserCircle2> : null}  {username}<span>{opponenttimeleft}</span> </div>
+         <div className=" text-white  flex justify-center align-center mr-12 mt-2 ml-12 gap-2">{gamestarted ? <><span className="text-xl flex justify-center items-start gap-2"><UserCircle2 className=""></UserCircle2>{username}</span><span className="ml-84"><Button className="bg-slate-100 text-gray-700 h-8 text-xl w-24 hover:text-white" ><TimerIcon className="size-md"></TimerIcon>{opponenttimeleft}</Button></span></> : null}   </div>
 
         </div>
         <div className="flex flex-col items-center justify-start mt-35 w-full h-full gap-10">
@@ -378,7 +382,7 @@ const Battle = () => {
     </div>
   ): waiting ? (
     <div className="fixed inset-0 w-full bg-opacity-50 flex items-center justify-center">
-      <ChessWaitingPage socket={socket} />
+      <ChessWaitingPage socket={socket} timechoosen={parseInt(timechosen)}/>
     </div>
   ) : !gamestarted ? (
     <div className="mr-30 rounded-md w-[350px] flex flex-col gap-20 items-center justify-center mt-30">
@@ -402,7 +406,7 @@ const Battle = () => {
       <Button
         onClick={() => {
           socket?.send(
-            JSON.stringify({ type: "join", messsage: "wants to join", time: timechosen })
+            JSON.stringify({ type: "join", messsage: "wants to join", time: parseInt(timechosen)})
           );
           setPlayertimeleft(parseInt(timechosen));
           setOpponenttimeleft(parseInt(timechosen));

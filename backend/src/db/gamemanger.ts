@@ -6,38 +6,60 @@ import WebSocket from 'ws';
 import { Square } from 'chess.js';
 
 
+
+type waitingstate={
+  60: Iuser | null,
+  300: Iuser | null,
+  600: Iuser | null,
+}
+
+type waitingsocket={
+  60: WebSocket | null,
+  300: WebSocket | null,
+  600: WebSocket | null,
+}
  export class gamemanger{
     games : game[]
-    waiting: Iuser | null;
-    waitingSocket: WebSocket | null;
+    waiting:waitingstate;
+    waitingSocket: waitingsocket;
 
     constructor()
     {
         this.games=[];
-        this.waiting=null;
-        this.waitingSocket=null;
+        this.waiting={
+          60: null,
+          300: null,
+          600: null
+        };
+        this.waitingSocket={
+          60: null,
+          300: null,
+          600: null
+        };
     }
 
-    adduser(player : Iuser,socket: WebSocket,time:number)
+    
+
+    adduser(player : Iuser,socket: WebSocket,time:60|300|600)
     {
         //if waiting is null
-        if(this.waiting==null && this.waitingSocket==null)
+        if(this.waiting![time]==null && this.waitingSocket![time]==null)
         {
-            this.waiting=player;
+            this.waiting![time]=player;
             console.log("Player " + player.username + " is waiting for another player");
-            this.waitingSocket=socket;
+            this.waitingSocket![time]=socket;
             console.log("Waiting for player 2");
             socket.send(JSON.stringify({ type: "waiting", message: "Waiting for player 2" }));
         }
         else
         {   let gameid =nanoid (5);
-            this.games.push(new game(this.waiting!,player,gameid,this.waitingSocket!,socket,time));
-            const name = this.waiting!.username;
-            this.waiting=null;
-           
+            this.games.push(new game(this.waiting![time]!,player,gameid,this.waitingSocket![time]!,socket,time));
+            const name = this.waiting![time]!.username;
+            this.waiting![time]=null;
+
             console.log("Game started between " + name + " and " + player.username);
-            this.waitingSocket!.send(JSON.stringify({ type: "start", message:{ message:[name,player.username,gameid],color: "w" }}));
-             this.waitingSocket=null;
+            this.waitingSocket[time]!.send(JSON.stringify({ type: "start", message:{ message:[name,player.username,gameid],color: "w" }}));
+             this.waitingSocket![time]=null;
             socket.send(JSON.stringify({ type: "start", message: {message:[player.username,name,gameid],color: "b"}}));
         }
     }
@@ -188,11 +210,11 @@ getmoves(socket: WebSocket,from:Square) {
   }
 }
 
-updatewaiting(socket: WebSocket, status: boolean) {
-   if(socket == this.waitingSocket)
+updatewaiting(socket: WebSocket, status: boolean,time:60|300|600) {
+   if(socket == this.waitingSocket[time])
    {
-      this.waitingSocket = status ? socket : null;
-      this.waiting = status ? this.waiting : null;
+      this.waitingSocket[time] = status ? socket : null;
+      this.waiting[time] = status ? this.waiting[time] : null;
       if(!status)
       {
         console.log("player removed from waiting list");

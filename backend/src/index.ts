@@ -85,7 +85,7 @@ wss.on('connection',  async function connection(socket,req) {
   let message : servermessage = JSON.parse(data.toString());
   if(message.type=="join")
   {
-     gm.adduser( player,socket,message.time);
+     gm.adduser( player,socket,message.time as 60|300|600);
   }
   if(message.type=="move")
   {
@@ -98,7 +98,7 @@ wss.on('connection',  async function connection(socket,req) {
    
  if(message.type =="waitingnull")
  {
-  gm.updatewaiting(socket,false);
+  gm.updatewaiting(socket,false,message.time as 60|300|600);
  }
    
   })
