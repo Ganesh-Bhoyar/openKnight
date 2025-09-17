@@ -1,4 +1,5 @@
 import { useState, useEffect ,useRef} from "react";
+import { useLocation } from "react-router-dom";
 import {
   Select,
   SelectContent,
@@ -9,17 +10,15 @@ import {
 import Rocketicon from "@/components/ui/rocketicon"
 import { TimerIcon, UserCircle2, ZapIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
-
 import pieces from "@/components/ui/pieces";
 import { toast } from "react-toastify";
-
 import GameInfo from "@/components/ui/gameinfo";
 import { getSquareColor } from "@/utils/getsquareColor";
 import ChessWaitingPage from "./waitingplayer";
-import { set } from "zod";
-import ChessResultsPage, { GameOverTimeout, LossPage } from "./result";
+ import ChessResultsPage, { GameOverTimeout, LossPage } from "./result";
 import Timer from "@/utils/timerlogic";
-import { pl } from "zod/v4/locales";
+ 
+ 
  
 
 
@@ -48,6 +47,8 @@ const Battle = () => {
   const  timerA = useRef<NodeJS.Timeout | null>(null);
   const  timerB = useRef<NodeJS.Timeout | null>(null);
   const [timechosen, settimechosen] = useState<string>("");
+  const location = useLocation();
+  const bot =useRef<boolean>(location.state?.bot || false);
   
  
 
@@ -110,13 +111,13 @@ const Battle = () => {
     socket.onmessage = (event) => {
       const { type, message } = JSON.parse(event.data);
       if (type == "welcome") {
-        console.log(message);
+       console.log(message);
         //this should be in toast coninter later
       }
       if (type == "start") {
         setWaiting(false);
         setColor(message.color);
-        console.log(message);//this should be in toast coninter later
+      // console.log(message);//this should be in toast coninter later
         setUsername(message.message[0]);
         setOpponent(message.message[1]);
         setGameid(message.message[2]);
@@ -124,17 +125,17 @@ const Battle = () => {
       }
       if (type == "authenticated") {
         if (message === "Ready to play") {
-          console.log("You are authenticated and ready to play");
+         // console.log("You are authenticated and ready to play");
           toast(message, {
             position: "top-center",
-            autoClose: 5000,
+            autoClose: 2000,
               style: {  color: '#1F2937'}
           });
           // Set gamestarted to true or perform any other action
           
         }
         else if (message === "Please Signin First") {
-          console.log("You are not authenticated");
+         // console.log("You are not authenticated");
           // Set gamestarted to false or perform any other action
           setGameStarted(false);
           toast(
@@ -142,10 +143,12 @@ const Battle = () => {
             {
               // any valid toast options here (e.g., position)
               position: "top-center",
-              autoClose: 5000,
+              autoClose: 2000,
                 style: {  color: '#1F2937'}
             }
           );
+          setTimeout(() => {window.location.href="/login"}, 2000);
+          
         }
         else if (message === "Unauthorized") {
           console.log("Unauthorized");
@@ -154,12 +157,13 @@ const Battle = () => {
           toast(
             "Unauthorized",
             {
-              // any valid toast options here (e.g., position)
+               
               position: "top-center",
-              autoClose: 5000,
+              autoClose: 2000,
               style: {  color: '#1F2937'}
             }
           );
+          setTimeout(() => {window.location.href="/login"}, 2000);
         }
       }
       if (type == "waiting") {
@@ -207,27 +211,7 @@ const Battle = () => {
 
 
       }
-
-
-
-      //this should be in toast coninter later
-
-
-      //  toast(
-      //     <div>
-      //       <div></div>
-      //       <pre className="mt-2 w-[700px] rounded-md bg-neutral-950 p-4 overflow-auto">
-      //         <code className="text-white">{JSON.stringify(`  ${message}  `, null, 2)}</code>
-      //       </pre>
-      //     </div>,
-      //     {
-      //       // any valid toast options here (e.g., position)
-      //       position: "top-center",
-      //       autoClose: 5000,
-      //     }
-      //   );
-
-
+ 
     };
     socket.onclose = () => {
       console.log("disconnected");
@@ -259,20 +243,20 @@ const Battle = () => {
 
   const resultProps = {
     player: {
-      name: "You",
+      name: username,
       rating: 1450,
       avatar: "👤",
-      color: "white"
+      color: color==="w"?"white":"black"
     },
     opponent: {
-      name: "Magnus_Chess",
+      name: opponent,
       rating: 1380,
       avatar: "👤",
-      color: "black"
+      color: color==="w"?"black":"white"
     },
     gameStats: {
       duration: "12:34",
-      moves: 42,
+      moves: history.length || 0,
       winType: "Checkmate",
       timeControl: "10+0"
     },
@@ -307,9 +291,9 @@ const Battle = () => {
               const prevmove = history.length === 0 ? false : history[history.length - 1].lan.includes(square);
               const piece = `${color == "w" ? boardarr[i] : boardarr[(7 - row) * 8 + col]}`;
               let validmove = validmoves.includes(square);
-              console.log("Current piece:", square);
-              console.log("Current valid move:", validmove);
-              console.log("previous move: ", prevmove);
+              // console.log("Current piece:", square);
+              // console.log("Current valid move:", validmove);
+              // console.log("previous move: ", prevmove);
 
               const squareColor = getSquareColor({
                 isPrevMove: prevmove,
@@ -332,28 +316,22 @@ const Battle = () => {
                     }
                     else if (move === "b" && move == color && from !== "" && validmove) {
                       setTo(square);
-                      console.log("Sending move:", from, "to:", square);
+                     // console.log("Sending move:", from, "to:", square);
                       setValidMoves([]);
                       socket?.send(JSON.stringify({ type: "move", from, to: square }));
+                      //console.log("Sending move:", from, "to:", square);
                        
 
-
-                      //websocket to vaild move
-                      //check if move is valid
-                      //when from is set ,call websocket to get valid moves
-                      //if valid move then update board
+ 
                     }
                     else if (move === "w" && move == color && from !== "" && validmove) {
                       setTo(square);
-                      console.log("Sending move:", from, "to:", square);
-                      console.log("Sending move:", from, "to:", square);
+                     // console.log("Sending move:", from, "to:", square);
+                    //  console.log("Sending move:", from, "to:", square);
                       setValidMoves([]);
                       socket?.send(JSON.stringify({ type: "move", from, to: square }));
-                       
-                      //websocket to vaild move
-                      //check if move is valid
-                      //when from is set ,call websocket to get valid moves
-                      //if valid move then update board
+                     // console.log("Sending move:", from, "to:", square);
+                     
                     }
                   }}
                 ><span className="absolute top-0 left-0 p-1">{(col == 0) ? <span className={`${isDark ? "text-zinc-300" : "text-zinc-500"} text-sm`}>{rank}</span> : ""}
@@ -405,9 +383,15 @@ const Battle = () => {
 
       <Button
         onClick={() => {
-          socket?.send(
+          if(bot.current == false && timechosen!=""){socket?.send(
             JSON.stringify({ type: "join", messsage: "wants to join", time: parseInt(timechosen)})
+          );}
+          else if(bot.current == true && timechosen!="")
+          {
+            socket?.send(
+            JSON.stringify({ type: "botadding", time: parseInt(timechosen)})
           );
+          }
           setPlayertimeleft(parseInt(timechosen));
           setOpponenttimeleft(parseInt(timechosen));
         }}

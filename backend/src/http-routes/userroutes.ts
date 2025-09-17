@@ -41,13 +41,13 @@ userroute.post("/signin",async (req ,res)=>{
    //console.log(password);
    if(!user)
    {
-     res.json({message:"please signin"})
+     res.status(400).json({message:"please signin"})
    }
    else
    {     const valid= await bcrypt.compare(password,user.password);
    if (!valid)
       {
-         res.status(200).json({message:"invalid credentials"})
+         res.status(401).json({message:"invalid credentials"})
       }
      else
       {

@@ -7,17 +7,19 @@ import WebSocket from 'ws';
 export class game{
     gameid: string
     player1: Iuser
-    player2:Iuser
+    player2:Iuser|null
     board: Chess
     moves:string[];
     currentmove:boolean;
     starttime: Date
     socket1:WebSocket;  
-    socket2:WebSocket;
+    socket2:WebSocket|null;
     timeleft1:number;
     timeleft2:number;
+    botplaying:boolean;
 
-    constructor(player1:Iuser,player2 : Iuser, gameid:string,socket1:WebSocket,socket2:WebSocket,time:number)
+
+    constructor(player1:Iuser,player2 : Iuser|null, gameid:string,socket1:WebSocket,socket2:WebSocket|null,time:number,botplaying=false)
     {
         this.player1=player1;
         this.player2=player2;
@@ -33,6 +35,8 @@ export class game{
 
         this.timeleft1=time;
         this.timeleft2=time;
+
+        this.botplaying=botplaying;
         
     }
 

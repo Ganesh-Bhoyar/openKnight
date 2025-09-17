@@ -290,8 +290,7 @@ const GameOverTimeout: React.FC<GameOverTimeoutProps> = ({
   opponent,
   playerTimeLeft="  00:00",
   opponentTimeLeft="  00:00",
-  gameStats={...{ duration: "5m 0s", moves: 40, timeControl: "3|2" }},
-  ratingChange="+18",
+ 
   onPlayAgain,
   onReturnHome,
 }) => {

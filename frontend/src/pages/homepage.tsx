@@ -49,7 +49,7 @@ export default function OpenKnightHomePage() {
           <ul className="hidden md:flex gap-6 font-medium">
             <li><a href="#home" className="hover:text-yellow-400 transition">Home</a></li>
             <li><a href="#play" className="hover:text-yellow-400 transition">Play</a></li>
-            <li><a href="#learn" className="hover:text-yellow-400 transition">Learn</a></li>
+            <li><a href="/learn" className="hover:text-yellow-400 transition">Learn</a></li>
             <li><a href="#community" className="hover:text-yellow-400 transition">Community</a></li>
             
           </ul>

@@ -111,8 +111,25 @@ async function onSubmit(values: z.infer<typeof formSchema>) {
   } catch (err) {
     if (axios.isAxiosError(err) && err.response) {
       if (err.response.status === 400) {
-        alert("Invalid credentials");
-      } else if (err.response.data && err.response.data.error) {
+        toast("Please Signup First", {
+          position: "top-center",
+          autoClose: 1500,
+          style: {  color: '#1F2937'}
+        });
+
+         setTimeout(() => {
+      window.location.href = "/signup";
+    }, 1500);
+      } 
+      else if (err.response.status === 401) {
+        toast("Invalid Credentials", {
+           position: "top-center",
+           autoClose:1500,
+            style: {  color: '#1F2937'}
+         });
+       
+      }
+      else if (err.response.data && err.response.data.error) {
         alert("Error: " + err.response.data.error);
       } else {
         alert("Login failed (server error)");

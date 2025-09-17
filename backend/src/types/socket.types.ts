@@ -26,4 +26,9 @@ interface waitingnullmessage{
     time:  number ;
 }
 
-export type servermessage=joinmessage |movemessage |authmessage |getmovesmessage |waitingnullmessage;
+interface botaddingmessage{
+    type:"botadding";
+    time:number;
+}
+
+export type servermessage=joinmessage |movemessage |authmessage |getmovesmessage |waitingnullmessage | botaddingmessage;

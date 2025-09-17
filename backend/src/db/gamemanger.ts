@@ -4,6 +4,7 @@ import {nanoid} from 'nanoid';
 import { usermodel,Iuser } from "../schema/db";
 import WebSocket from 'ws';
 import { Square } from 'chess.js';
+import { set } from 'mongoose';
 
 
 
@@ -73,19 +74,23 @@ type waitingsocket={
   const currentgame = this.games.find(
     game => game.socket1 === socket || game.socket2 === socket
   );
+  //console.log("Current game found:", currentgame ? currentgame.gameid : "none",currentgame?.socket1,currentgame?.socket2,currentgame?.currentmove);
 
   if (
     currentgame &&
     (
       (currentgame.socket1 === socket && currentgame.currentmove === true) ||
-      (currentgame.socket2 === socket && currentgame.currentmove === false)
+      (currentgame.socket2 === socket && currentgame.currentmove === false) ||
+      (currentgame.botplaying && currentgame.socket2 === null && currentgame.currentmove === false)
     )
   ) {
     const move = { from, to };
+    //console.log("Attempting move:", move);
     let moveresult=null;
 
     try {
       moveresult = currentgame.board.move(move);
+      //console.log("Move result:", moveresult);
     } catch (e) {
       socket.send(JSON.stringify({ type: "move", message: "Illegal move" }));
       return;
@@ -117,7 +122,7 @@ const message1 = {
        type: "move",
         message: message1
       }));
-    currentgame.socket2.send(JSON.stringify({
+    currentgame.socket2?.send(JSON.stringify({
         type: "move",
         message: message1
       }));
@@ -128,8 +133,8 @@ const message1 = {
 
     // Checkmate
     if (currentgame.board.isGameOver() && currentgame.board.isCheckmate()) {
-      console.log("checkmate is conditionally rendered");
-      const winner = currentgame.socket1 === socket ? { username: currentgame.player1.username, color: "w" } : { username: currentgame.player2.username, color: "b" };
+      //console.log("checkmate is conditionally rendered");
+      const winner = currentgame.socket1 === socket ? { username: currentgame.player1.username, color: "w" } : { username: currentgame.player2!.username, color: "b" };
 
       // Notify both players
       currentgame.socket1.send(JSON.stringify({
@@ -139,7 +144,7 @@ const message1 = {
           color: winner.color
         }
       }));
-      currentgame.socket2.send(JSON.stringify({
+      currentgame.socket2?.send(JSON.stringify({
         type: "result",
         message: {
           message: `Checkmate! ${winner.username} wins`,
@@ -158,7 +163,7 @@ const message1 = {
         type: "result",
         message: "Stalemate — Draw"
       }));
-      currentgame.socket2.send(JSON.stringify({
+      currentgame.socket2?.send(JSON.stringify({
         type: "result",
         message: "Stalemate — Draw"
       }));
@@ -167,7 +172,7 @@ const message1 = {
 
     if (currentgame.board.inCheck()) {
       if(socket === currentgame.socket1) {
-         currentgame.socket2.send(JSON.stringify({
+              currentgame.socket2?.send(JSON.stringify({
         type: "result",
         message: "Check — Your turn"
       }));
@@ -175,13 +180,14 @@ const message1 = {
         type: "result",
         message: "Check — Opponent's turn"
       }));
+
         
      
     }
   
     else
     {
-        currentgame.socket2.send(JSON.stringify({
+        currentgame.socket2?.send(JSON.stringify({
         type: "result",
         message: "Check — Opponent's turn"
       }));
@@ -191,7 +197,18 @@ const message1 = {
       }));
     }
   }
-
+    
+  
+      if(currentgame.botplaying && currentgame.socket2===null && currentgame.currentmove===false)
+      {
+        const moves = currentgame.board.moves({verbose:true}).map(m => m.from + m.to);
+        const randomMove = moves[Math.floor(Math.random() * moves.length)];
+        const from = randomMove.slice(0, 2);
+        const to = randomMove.slice(2, 4);
+        const randomtime = Math.floor(Math.random() * 5) +3;
+        setTimeout(() => {
+        this.makemove(currentgame.socket1, from, to);},randomtime*1000);
+      }
     // Normal move: notify both players
 
 }}
@@ -206,7 +223,7 @@ getmoves(socket: WebSocket,from:Square) {
       type: "valid_moves",
       message: currentgame.board.moves({ square:from, verbose: true })
     }));
-    console.log("player removed from waiting list");
+   
   }
 }
 
@@ -217,11 +234,21 @@ updatewaiting(socket: WebSocket, status: boolean,time:60|300|600) {
       this.waiting[time] = status ? this.waiting[time] : null;
       if(!status)
       {
-        console.log("player removed from waiting list");
+        //console.log("player removed from waiting list");
       }
    }
    
 }
+
+
+ addbot(player : Iuser,socket: WebSocket,time:60|300|600)
+ {
+            let gameid =nanoid (5);
+            this.games.push(new game(player,null,gameid,socket,null,time,true));
+            
+            socket.send(JSON.stringify({ type: "start", message: {message:[player.username,"bot",gameid],color: "w"}}));
+      
+ }
  }
  
 

@@ -89,6 +89,7 @@ wss.on('connection',  async function connection(socket,req) {
   }
   if(message.type=="move")
   {
+    console.log("Move made from requeset is pass to function",message.from,"to",message.to);
       gm.makemove(socket,message.from,message.to);
   }
   if(message.type=="getmoves")
@@ -99,6 +100,10 @@ wss.on('connection',  async function connection(socket,req) {
  if(message.type =="waitingnull")
  {
   gm.updatewaiting(socket,false,message.time as 60|300|600);
+ }
+ if(message.type == "botadding")
+ {
+  gm.addbot(player,socket,message.time as 60|300|600);
  }
    
   })
