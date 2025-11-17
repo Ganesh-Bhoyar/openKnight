@@ -107,22 +107,28 @@ export function Signup() {
     setTimeout(() => {
       window.location.href = "/login";
     }, 2500);
-  } catch (err) {
-    let errormessage="";
-     
-    if (axios.isAxiosError(err) && err.response) {
-      if (err.response.status === 409) {
-        errormessage = (err as any).data.error;
-      } else if (err.response.data && err.response.data.error) {
-        errormessage = "Error: " + err.response.data.error;
-      } else {
-        errormessage = "Signup failed (server error)";
-      }
-    } else {
-      errormessage = "Signup failed (network or unknown error)";
-    }
-
-    toast.error(errormessage);
   }
+  catch (err: any) {
+  console.log(err.message);
+  // } catch (err) {
+  //   let errormessage="";
+     
+  //   if (axios.isAxiosError(err) && err.response) {
+  //     if (err.response.status === 409) {
+  //       errormessage = (err as any).data.error;
+  //     } else if (err.response.data && err.response.data.error) {
+  //       errormessage = "Error: " + err.response.data.error;
+  //     } else {
+  //       errormessage = "Signup failed (server error)";
+  //     }
+  //   } else {
+  //     errormessage = "Signup failed (network or unknown error)";
+  //   }
+
+  //   toast.error(errormessage);
+  // }
+  
+}
+
   }
  

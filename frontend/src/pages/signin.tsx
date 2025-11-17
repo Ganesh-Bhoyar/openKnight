@@ -103,39 +103,43 @@ async function onSubmit(values: z.infer<typeof formSchema>) {
            autoClose:2500,
            style: {  color: '#1F2937'}
          });
-      localStorage.setItem('token', res.data.auth)
+      localStorage.setItem('token',(res as any).data.auth)
       setTimeout(() => {
       window.location.href = "/dashboard";
     }, 2500);
     }
-  } catch (err) {
-    if (axios.isAxiosError(err) && err.response) {
-      if (err.response.status === 400) {
-        toast("Please Signup First", {
-          position: "top-center",
-          autoClose: 1500,
-          style: {  color: '#1F2937'}
-        });
-
-         setTimeout(() => {
-      window.location.href = "/signup";
-    }, 1500);
-      } 
-      else if (err.response.status === 401) {
-        toast("Invalid Credentials", {
-           position: "top-center",
-           autoClose:1500,
-            style: {  color: '#1F2937'}
-         });
-       
-      }
-      else if (err.response.data && err.response.data.error) {
-        alert("Error: " + err.response.data.error);
-      } else {
-        alert("Login failed (server error)");
-      }
-    } else {
-      alert("Login failed (network or unknown error)");
-    }
   }
+  catch (err: any) {
+  console.log(err.message);
+  // } catch (err) {
+  //   if (axios.isAxiosError(err) && err.response) {
+  //     if (err.response.status === 400) {
+  //       toast("Please Signup First", {
+  //         position: "top-center",
+  //         autoClose: 1500,
+  //         style: {  color: '#1F2937'}
+  //       });
+
+  //        setTimeout(() => {
+  //     window.location.href = "/signup";
+  //   }, 1500);
+  //     } 
+  //     else if (err.response.status === 401) {
+  //       toast("Invalid Credentials", {
+  //          position: "top-center",
+  //          autoClose:1500,
+  //           style: {  color: '#1F2937'}
+  //        });
+       
+  //     }
+  //     else if (err.response.data && err.response.data.error) {
+  //       alert("Error: " + err.response.data.error);
+  //     } else {
+  //       alert("Login failed (server error)");
+  //     }
+  //   } else {
+  //     alert("Login failed (network or unknown error)");
+  //   }
+  // }
+}
 }
