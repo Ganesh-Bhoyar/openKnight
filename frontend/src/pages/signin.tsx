@@ -93,7 +93,7 @@ export function Signin() {
 async function onSubmit(values: z.infer<typeof formSchema>) {
   try {
     const res = await axios({
-      url: "http://localhost:3000/api/v1/auth/signin",
+      url: "https://openknight-backend.onrender.com/api/v1/auth/signin",
       method: "POST",
       data: values
     })

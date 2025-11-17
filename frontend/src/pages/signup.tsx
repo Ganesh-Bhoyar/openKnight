@@ -93,7 +93,7 @@ export function Signup() {
     
     try {
       await axios({
-        url: "http://localhost:3000/api/v1/auth/signup",
+        url: "https://openknight-backend.onrender.com/api/v1/auth/signup",
         method: "POST",
         data: values
       });

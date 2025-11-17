@@ -102,7 +102,7 @@ const Battle = () => {
   
   useEffect(() => {
 
-    const socket = new WebSocket("ws://localhost:3000");
+    const socket = new WebSocket("wss://openknight-backend.onrender.com");
     setSocket(socket);
     socket.onopen = () => {
       socket.send(JSON.stringify({ type: 'auth', token: localStorage.getItem("token") }));
