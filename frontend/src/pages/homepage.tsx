@@ -1,5 +1,5 @@
- 
 import back from "../assets/back.png";
+
 
 const gameModes = [
   { name: "Quick Play", icon: "⚡", desc: "Jump into a game instantly with our smart matchmaking system" },
@@ -9,6 +9,7 @@ const gameModes = [
   { name: "Analysis", icon: "🔍", desc: "Analyze positions with our powerful chess engine" },
   { name: "Learn", icon: "📚", desc: "Master chess fundamentals with interactive lessons" }
 ];
+
 
 const testimonials = [
   {
@@ -25,6 +26,7 @@ const testimonials = [
   }
 ];
 
+
 const features = [
   "Play against players worldwide",
   "Advanced chess engine analysis",
@@ -36,13 +38,14 @@ const features = [
   "Rating and statistics tracking",
 ];
 
+
 export default function OpenKnightHomePage() {
   return (
     <div className="overflow-x-hidden">
       {/* Header */}
       <header className="bg-gray-900 text-white shadow fixed w-full z-50">
         <nav className="container mx-auto flex items-center justify-between py-3 px-5">
-          <div className="flex items-center gap-2 font-bold text-xl">
+          <div className="flex items-center gap-2 font-bold text-xl cursor-pointer">
             <span className="text-yellow-400 text-2xl">♘</span>
             <span>OpenKnight</span>
           </div>
@@ -51,7 +54,7 @@ export default function OpenKnightHomePage() {
             <li><a href="#play" className="hover:text-yellow-400 transition">Play</a></li>
             <li><a href="/learn" className="hover:text-yellow-400 transition">Learn</a></li>
             <li><a href="#community" className="hover:text-yellow-400 transition">Community</a></li>
-            
+
           </ul>
           <div className="flex items-center gap-3">
             <button className="bg-gray-800 rounded px-4 py-1 text-sm font-semibold hover:bg-yellow-400 hover:text-black transition" onClick={() => {window.location.href = "/login"}}>Login</button>
@@ -60,22 +63,46 @@ export default function OpenKnightHomePage() {
         </nav>
       </header>
 
+
       {/* Hero Section */}
   <div className="h-screen w-screen bg-cover bg-center " style={{ backgroundImage: `url(${back})` }}>
- 
+
+
 
 
       <section id="home" className="min-h-screen   flex flex-col items-center justify-center pt-32">
-       
-        <div className="text-center max-w-2xl mx-auto">
-          <h1 className="text-4xl md:text-6xl font-extrabold text-yellow-400 mb-4">Master Your Chess Journey</h1>
-          <p className="text-lg text-gray-200 mb-6">
+
+        <div className="text-center max-w-3xl mx-auto">
+          {/* OpenKnight Branding - Large and Attractive */}
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <span className="text-yellow-400 text-6xl md:text-8xl animate-pulse">♘</span>
+            <h1 className="text-5xl md:text-7xl font-extrabold text-white tracking-wider">
+              Open<span className="text-yellow-400">Knight</span>
+            </h1>
+          </div>
+
+          <h2 className="text-3xl md:text-5xl font-bold text-yellow-400 mb-4">Master Your Chess Journey</h2>
+          <p className="text-lg md:text-xl text-gray-200 mb-8">
             Join thousands of players in the ultimate online chess experience.
           </p>
-          <div className="flex flex-col md:flex-row gap-4 justify-center mb-8">
-            <button className="bg-yellow-400 text-black text-xl font-bold px-8 py-3 rounded-lg shadow hover:bg-yellow-300 transition  " onClick={() => {window.location.href = "/dashboard"}}>Start Playing</button>
-            <button className="bg-gray-800 text-white text-xl font-bold px-8 py-3 rounded-lg shadow hover:bg-gray-700 transition" onClick={() => {window.location.href = "/learn"}}>Learn Chess</button>
-          </div>
+<div className="flex flex-col md:flex-row items-center gap-4 justify-center mb-8">
+  <button
+    className="w-fit bg-yellow-400 text-black text-xl font-bold px-12 py-2 md:px-8 md:py-3 rounded-lg shadow hover:bg-yellow-300 transition"
+    onClick={() => { window.location.href = "/dashboard" }}
+  >
+    Start Playing
+  </button>
+
+
+  <button
+    className="w-fit bg-gray-800 text-white text-xl font-bold px-12 py-2 md:px-8 md:py-3 rounded-lg shadow hover:bg-gray-700 transition"
+    onClick={() => { window.location.href = "/learn" }}
+  >
+    Learn Chess
+  </button>
+</div>
+
+
           {/* Animated Chess Pieces */}
           <div className="flex gap-3 justify-center text-3xl text-grey-800 animate-bounce">
             <span>♔</span>
@@ -86,6 +113,7 @@ export default function OpenKnightHomePage() {
           </div>
         </div>
       </section>
+
 
       {/* Game Modes */}
       <section id="play" className="py-20 bg-slate-900">
@@ -103,6 +131,7 @@ export default function OpenKnightHomePage() {
         </div>
       </section>
 
+
       {/* Stats & Community */}
       <section id="community" className="py-16 bg-gray-950 p-12">
         <div className="container mx-auto">
@@ -115,6 +144,7 @@ export default function OpenKnightHomePage() {
         </div>
       </section>
 
+
       {/* Features */}
       <section className="py-16 bg-slate-900 p-12 ">
         <div className="container mx-auto ">
@@ -124,6 +154,7 @@ export default function OpenKnightHomePage() {
           </ul>
         </div>
       </section>
+
 
       {/* Testimonials */}
       <section className="py-16 bg-gray-950 p-12">
@@ -143,7 +174,8 @@ export default function OpenKnightHomePage() {
           </div>
         </div>
       </section>
-      
+
+
 
       {/* Footer */}
       <footer className="bg-gray-900 text-gray-300 py-8 p-12">

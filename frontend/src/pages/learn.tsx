@@ -107,6 +107,10 @@ const LearnPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-slate-800 to-gray-950 text-white">
+       <div className="flex items-center gap-2 font-bold text-lg lg:text-xl  pt-5 pl-5 cursor-pointer " onClick={() => {window.location.href = "/"}}>
+            <span className="text-yellow-400 text-xl lg:text-2xl">♘</span>
+            <span className="text-yellow-400">OpenKnight</span>
+          </div>
       {/* Header */}
       <div className="pt-20 pb-10 text-center">
         <h1 className="text-5xl md:text-6xl font-bold text-yellow-400 mb-4">

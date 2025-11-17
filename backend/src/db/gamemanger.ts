@@ -128,7 +128,7 @@ const message1 = {
       }));
 
     // Optional: log current board
-    console.log(currentgame.board.ascii());
+   // console.log(currentgame.board.ascii());
   
 
     // Checkmate

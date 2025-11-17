@@ -31,7 +31,7 @@ const Battle = () => {
   const [color, setColor] = useState<string>("w");
   const [boardarr, setBoardArr] = useState<string[]>([]);
   const [from, setFrom] = useState<string>("");
-  const [to, setTo] = useState<string>("");
+  const [, setTo] = useState<string>("");
   const [socket, setSocket] = useState<WebSocket | null>(null);
   const [validmoves, setValidMoves] = useState<string[]>([]);
   const [username, setUsername] = useState<string>("");
@@ -47,6 +47,7 @@ const Battle = () => {
   const  timerA = useRef<NodeJS.Timeout | null>(null);
   const  timerB = useRef<NodeJS.Timeout | null>(null);
   const [timechosen, settimechosen] = useState<string>("");
+  const [time, settime] = useState<Date>(new Date());
   const location = useLocation();
   const bot =useRef<boolean>(location.state?.bot || false);
   
@@ -111,7 +112,7 @@ const Battle = () => {
     socket.onmessage = (event) => {
       const { type, message } = JSON.parse(event.data);
       if (type == "welcome") {
-       console.log(message);
+       //console.log(message);
         //this should be in toast coninter later
       }
       if (type == "start") {
@@ -122,6 +123,8 @@ const Battle = () => {
         setOpponent(message.message[1]);
         setGameid(message.message[2]);
         setGameStarted(true);
+         
+        settime( new Date())
       }
       if (type == "authenticated") {
         if (message === "Ready to play") {
@@ -151,7 +154,7 @@ const Battle = () => {
           
         }
         else if (message === "Unauthorized") {
-          console.log("Unauthorized");
+          //console.log("Unauthorized");
           // Set gamestarted to false or perform any other action
           setGameStarted(false);
           toast(
@@ -171,17 +174,17 @@ const Battle = () => {
       }
       if (type == "valid_moves") {
         setValidMoves((message as Move[]).map((m) => m.to));
-        console.log("Valid moves:", message);
-        console.log("Current valid moves:", validmoves[0]);
+        //console.log("Valid moves:", message);
+        //console.log("Current valid moves:", validmoves[0]);
       }
       if (type == "move") {
         setBoard(message.message.fen);
         setHistory((message.message.move as history[]).map((m) => m));
-        console.log("Move made:", message.message.move);
+        //console.log("Move made:", message.message.move);
       }
       if (type == "result") {
 
-        console.log("Game over:", message);
+        //console.log("Game over:", message);
         if (message.message.toLowerCase().includes("checkmate")) {
           setGameover(true);
           setWinner(message.color == "w" ? "w" : "b");
@@ -193,7 +196,7 @@ const Battle = () => {
           socket.close();
         }
         else {
-          console.log(message.message);
+          //console.log(message.message);
           toast(
             <div>
               <div></div>
@@ -266,19 +269,19 @@ const Battle = () => {
   return (
     <div className="flex  items-center justify-center h-screen bg-gradient-to-br from-gray-900 via-slate-800 to-gray-950 w-full overflow-hidden">
       <div className="bg-neutral-900 flex flex-col items-center justify-center w-48  h-12 fixed left-0 top-6 text-white">
-       <div className="flex items-center gap-2 font-bold text-xl">
+       <div className="flex items-center gap-2 font-bold text-xl cursor-pointer" onClick={() => {window.location.href = "/"}}>
             <span className="text-yellow-400 text-2xl">♘</span>
             <span className="text-yellow-400">OpenKnight</span>
           </div>
       </div>
 
-      <div className="flex  items-center justify-center w-full h-full grow- gap- mt-8 ml-56 noscroll">
-        <div className="flex flex-col items-center justify-center w-full h-full mb-16 rounded-3xl">
+      <div className="flex flex-col  md:flex-row items-center justify-center w-full h-full grow- gap- mt-8 md:ml-56 noscroll">
+        <div className="flex flex-col items-center justify-center w-full h-full mb-16 rounded-3xl pt-68  pl-12 md:pl-0 pr-12 md:pr-0 md:pt-0">
           
           
-           <div className=" text-white  flex justify-center align-center mr-12  mb-2 ml-12 gap-2">{gamestarted ? <><span className="text-xl flex justify-center items-end gap-2"><UserCircle2 className=""></UserCircle2>{opponent}</span><span className="ml-84"><Button className="bg-slate-100 text-gray-700 h-8 text-xl w-24 hover:text-white" ><TimerIcon className="size-md"></TimerIcon>{playertimeleft}</Button></span></> : null}   </div>
+           <div className=" text-white  flex  flex-row justify-center align-center mr-28 md:mr-12   mb-2 ml-36 md:ml-12 gap-2">{gamestarted ? <><span className="text-xl flex justify-center items-end gap-2 mt-5 md:mt-0"><UserCircle2 className=""></UserCircle2>{opponent}</span><span className="ml-50 md:ml-84"><Button className="bg-slate-100 text-gray-700 h-8 text-xl w-24 hover:text-white" ><TimerIcon className="size-md"></TimerIcon>{playertimeleft}</Button></span></> : null}   </div>
 
-          <div className="grid grid-cols-8 grid-rows-8 w-[500px] h-[500px] relative">
+          <div className="grid grid-cols-8 grid-rows-8 w-[350px] h-[350px] md:w-[500px] md:h-[500px] relative">
 
             {Array.from({ length: 64 }, (_, i) => {
               const row = Math.floor(i / 8);
@@ -316,6 +319,7 @@ const Battle = () => {
                     }
                     else if (move === "b" && move == color && from !== "" && validmove) {
                       setTo(square);
+                      //console.log(to)
                      // console.log("Sending move:", from, "to:", square);
                       setValidMoves([]);
                       socket?.send(JSON.stringify({ type: "move", from, to: square }));
@@ -340,10 +344,11 @@ const Battle = () => {
               );
             })}
           </div>
-         <div className=" text-white  flex justify-center align-center mr-12 mt-2 ml-12 gap-2">{gamestarted ? <><span className="text-xl flex justify-center items-start gap-2"><UserCircle2 className=""></UserCircle2>{username}</span><span className="ml-84"><Button className="bg-slate-100 text-gray-700 h-8 text-xl w-24 hover:text-white" ><TimerIcon className="size-md"></TimerIcon>{opponenttimeleft}</Button></span></> : null}   </div>
+         <div className=" text-white  flex justify-center align-center mr-28 md:mr-12 mt-2 ml-36 md:ml-12 gap-2">{gamestarted ? <><span className="text-xl flex justify-center items-start gap-2 "><UserCircle2 className=""></UserCircle2>{username}</span><span className="ml-42 md:ml-84 mt-4 md:mt-0"><Button className="bg-slate-100 text-gray-700 h-8 text-xl w-24 hover:text-white" ><TimerIcon className="size-md"></TimerIcon>{opponenttimeleft}</Button></span></> : null}   </div>
+          {/* <div className=" text-white  flex  flex-row justify-center align-center mr-28 md:mr-12   mb-2 ml-36 md:ml-12 gap-2">{gamestarted ? <><span className="text-xl flex justify-center items-end gap-2 mt-5 md:mt-0"><UserCircle2 className=""></UserCircle2>{opponent}</span><span className="ml-50 md:ml-84"><Button className="bg-slate-100 text-gray-700 h-8 text-xl w-24 hover:text-white" ><TimerIcon className="size-md"></TimerIcon>{playertimeleft}</Button></span></> : null}   </div> */}
 
         </div>
-        <div className="flex flex-col items-center justify-start mt-35 w-full h-full gap-10">
+        <div className="flex flex-col items-center justify-start mt-0 md:mt-35 w-full h-full gap-10">
   {gameover ? (
     <div className="fixed inset-0 w-full bg-opacity-50 flex items-center justify-center">
       {winner === "draw" ? (
@@ -356,16 +361,16 @@ const Battle = () => {
     </div>
   ) :timeup ?(
     <div className="fixed inset-0 w-full h-screen py-10 bg-opacity-50 flex items-center justify-center my-10">
-      <GameOverTimeout {...resultProps}  playerTimeLeft={playertimeleft.toString()}  opponentTimeLeft={opponenttimeleft.toString()} onPlayAgain={()=>{window.location.href="/game"}} onReturnHome={()=>{window.location.href="/"}}/>
+      <GameOverTimeout {...resultProps}  playerTimeLeft={opponenttimeleft.toString()}  opponentTimeLeft={playertimeleft.toString()} onPlayAgain={()=>{window.location.href="/battle"}} onReturnHome={()=>{window.location.href="/"}}/>
     </div>
   ): waiting ? (
     <div className="fixed inset-0 w-full bg-opacity-50 flex items-center justify-center">
       <ChessWaitingPage socket={socket} timechoosen={parseInt(timechosen)}/>
     </div>
   ) : !gamestarted ? (
-    <div className="mr-30 rounded-md w-[350px] flex flex-col gap-20 items-center justify-center mt-30">
+    <div className="md:mr-30 rounded-md w-[200px] md:w-[350px] flex flex-col gap-10 md:gap-20 items-center justify-center mt-2 md:mt-30 mr-5">
       <Select onValueChange={(value) => settimechosen(value)}>
-        <SelectTrigger className="w-[350px] h-[70px] bg-slate-200 font-white rounded-lg">
+        <SelectTrigger className="w-[200px] md:w-[350px] h-[70px] bg-slate-200 font-white rounded-lg">
           <SelectValue placeholder="Select Time" />
         </SelectTrigger>
         <SelectContent>
@@ -395,20 +400,20 @@ const Battle = () => {
           setPlayertimeleft(parseInt(timechosen));
           setOpponenttimeleft(parseInt(timechosen));
         }}
-        className="bg-gd-100 flex hover:bg-emerald-400 items-center justify-center text-center w-[350px] h-[50px]"
+        className="bg-gd-100 flex hover:bg-emerald-400 items-center justify-center text-center w-[200px] md:w-[350px] h-[50px]"
       >
         Start Game
       </Button>
     </div>
   ) : (
-    <div className="pb-100">
+    <div className="pb-68 md:pb-100">
       <GameInfo
         history={history}
         gameinfo={{
           name1: username,
           name2: opponent,
           gameid: gameid,
-          gamestarted: new Date(),
+          gamestarted: time,
         }}
       />
     </div>

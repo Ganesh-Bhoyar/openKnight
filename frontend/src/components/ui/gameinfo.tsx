@@ -37,9 +37,9 @@ const chessSymbols: Record<string, string> = {
 
 const GameInfo = (props: InfoProps) => {
   return (
-    <Card className="w-[420px] bg-zinc-900 text-white shadow-xl rounded-2xl">
+    <Card className="w-[350px] md:w-[420px] h-[300px] md:h-auto bg-zinc-900 text-white shadow-xl rounded-2xl">
       <CardHeader>
-        <CardTitle className="text-xl font-semibold tracking-wide text-center">
+        <CardTitle className=" text-l md:text-xl font-semibold tracking-wide text-center">
           Game Details
         </CardTitle>
       </CardHeader>
@@ -61,7 +61,7 @@ const GameInfo = (props: InfoProps) => {
           </TabsList>
 
           {/* History */}
-          <TabsContent value="history" className="mt-4 max-h-[300px] overflow-y-auto space-y-2">
+          <TabsContent value="history" className="mt-4  max-h-[145px] md:max-h-[300px] overflow-y-auto space-y-2">
             {props.history.length === 0 ? (
               <div className="text-gray-400 text-sm italic text-center">
                 No moves yet...
@@ -72,7 +72,7 @@ const GameInfo = (props: InfoProps) => {
                 return (
                   <div
                     key={index}
-                    className="flex items-center justify-between bg-zinc-800 rounded-lg px-4 py-2 hover:bg-zinc-700 transition-all"
+                    className="flex items-center justify-between bg-zinc-800 rounded-lg px-3 md:px-4 py-1 md:py-2 hover:bg-zinc-700 transition-all"
                   >
                     <span className="font-semibold text-zinc-300">{index + 1}.</span>
                     <span className="font-mono">{chessSymbols[`${color}${piece}`]}{from}</span>
@@ -85,7 +85,7 @@ const GameInfo = (props: InfoProps) => {
           </TabsContent>
 
           {/* Game Info */}
-          <TabsContent value="gameinfo" className="mt-4 space-y-3">
+          <TabsContent value="gameinfo" className="mt-4  max-h-[145px] md:max-h-[300px] overflow-y-auto space-y-2">
             <div className="bg-zinc-800 p-3 rounded-lg">
               <span className="font-semibold">Player 1:</span> {props.gameinfo.name1}
             </div>
@@ -97,7 +97,7 @@ const GameInfo = (props: InfoProps) => {
             </div>
             <div className="bg-zinc-800 p-3 rounded-lg">
               <span className="font-semibold">Started:</span>{" "}
-              {props.gameinfo.gamestarted.toLocaleString()}
+              {props.gameinfo.gamestarted.toLocaleTimeString()}
             </div>
           </TabsContent>
         </Tabs>

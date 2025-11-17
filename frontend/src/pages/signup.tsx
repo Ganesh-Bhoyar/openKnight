@@ -4,12 +4,12 @@ import { useForm } from "react-hook-form"
 import axios from "axios"
 import { z} from "zod";
  import { Button } from "@/components/ui/button"
- import { ToastContainer, toast } from 'react-toastify';
+ import {  toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import {
   Form,
   FormControl,
-  FormDescription,
+ 
   FormField,
   FormItem,
   FormLabel,
@@ -92,7 +92,7 @@ export function Signup() {
    async function onSubmit(values: z.infer<typeof formSchema>) {
     
     try {
-      const res = await axios({
+      await axios({
         url: "http://localhost:3000/api/v1/auth/signup",
         method: "POST",
         data: values
