@@ -1,6 +1,6 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-interface history{
+interface history {
   before: string;
   after: string;
   color: string;
@@ -37,8 +37,8 @@ const chessSymbols: Record<string, string> = {
 
 const GameInfo = (props: InfoProps) => {
   return (
-    <Card className="w-[350px] md:w-[420px] h-[300px] md:h-auto bg-zinc-900 text-white shadow-xl rounded-2xl">
-      <CardHeader>
+    <Card className="w-[95vw] md:w-[420px] h-auto bg-zinc-900 text-white shadow-xl rounded-2xl">
+      <CardHeader className="invisible md:visible">
         <CardTitle className=" text-l md:text-xl font-semibold tracking-wide text-center">
           Game Details
         </CardTitle>
@@ -61,18 +61,18 @@ const GameInfo = (props: InfoProps) => {
           </TabsList>
 
           {/* History */}
-          <TabsContent value="history" className="mt-4  max-h-[145px] md:max-h-[300px] overflow-y-auto space-y-2">
+          <TabsContent value="history" className="mt-4 flex flex-row md:flex-col overflow-x-auto md:overflow-x-hidden md:overflow-y-auto gap-2 md:gap-0 max-h-[145px] md:max-h-[300px] space-y-0 md:space-y-2 pb-2 md:pb-0">
             {props.history.length === 0 ? (
-              <div className="text-gray-400 text-sm italic text-center">
+              <div className="text-gray-400 text-sm italic text-center w-full">
                 No moves yet...
               </div>
             ) : (
               props.history.map((move, index) => {
-                const { from, to ,piece,color} = move;
+                const { from, to, piece, color } = move;
                 return (
                   <div
                     key={index}
-                    className="flex items-center justify-between bg-zinc-800 rounded-lg px-3 md:px-4 py-1 md:py-2 hover:bg-zinc-700 transition-all"
+                    className="flex items-center justify-between bg-zinc-800 rounded-lg px-3 md:px-4 py-1 md:py-2 hover:bg-zinc-700 transition-all min-w-[120px] md:min-w-0"
                   >
                     <span className="font-semibold text-zinc-300">{index + 1}.</span>
                     <span className="font-mono">{chessSymbols[`${color}${piece}`]}{from}</span>
